@@ -1,0 +1,67 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="data-spm" />
+    <!--1.在引入阿里云验证码JS脚本的位置之前，或者在html的head标签最前的位置添加一个script脚本，里面保存一个含有region和prefix参数的全局变量AliyunCaptchaConfig即可-->
+    <script>
+        window.AliyunCaptchaConfig = {
+            // 必填，验证码示例所属地区，支持中国内地（cn）、新加坡（sgp）
+            region: "cn",
+            // 必填，身份标。开通阿里云验证码2.0后，您可以在控制台概览页面的实例基本信息卡片区域，获取身份标
+            prefix: "b0m32e",
+        };
+    </script>
+    <!--2.集成主JS-->
+    <script
+            type="text/javascript"
+            src="https://o.alicdn.com/captcha-frontend/aliyunCaptcha/AliyunCaptcha.js"
+    ></script>
+</head>
+
+<body>
+<div id="captcha-element"></div>
+// 预留的验证码元素，用于配置初始化函数中的element参数
+<button id="button" class="btn">登录</button>
+弹出式下，用于触发验证码弹窗的元素
+<!--3.新建一个<script>标签，用于调用验证码初始化函数initAliyunCaptcha-->
+<script type="text/javascript">
+    var captcha;
+    // 弹出式，除region和prefix以外的参数
+    window.initAliyunCaptcha({
+        // 场景ID。根据步骤二新建验证场景后，您可以在验证码场景列表，获取该场景的场景ID
+        SceneId: "177jxdo1",
+        // 验证码模式，popup表示弹出式，embed表示嵌入式。无需修改
+        mode: "popup",
+        // 页面上预留的渲染验证码的元素，与原代码中预留的页面元素保持一致。
+        element: "#captcha-element",
+        // 触发验证码弹窗或无痕验证的元素
+        button: "#button",
+        // 验证码验证通过回调函数
+        success: function (captchaVerifyParam) {
+            console.log("captchaVerifyParam", captchaVerifyParam)
+            // 入参为验签captchaVerifyParam
+            // 1.向后端发起业务请求进行验证码验签captchaVerifyParam校验
+            // 2.根据校验结果来进行业务处理
+            // 3.如业务需要重新进行验证码验证，调用验证码初始化方法initAliyunCaptcha重新初始化验证码
+        },
+        // 验证码验证不通过回调函数
+        fail: function (result) {
+            // 入参为不通过信息
+            // 正常验证有效期内不需要做任何操作，验证码自动刷新，重新进行验证
+            console.error(result);
+        },
+        // 绑定验证码实例回调函数，该回调会在验证码初始化成功后调用
+        getInstance: function (instance) {
+            captcha = instance;
+        },
+        // 滑块验证和一点即过的验证形态触发框体样式，支持自定义宽度和高度，单位为px。
+        slideStyle: {
+            width: 360,
+            height: 40,
+        },
+        // ...其他参数，参考initAliyunCaptcha参数说明
+    });
+</script>
+</body>
+</html>

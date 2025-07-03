@@ -8,9 +8,9 @@ import (
 )
 
 const (
-	AccessKeyID     = "LTAI5t7c9pCXTnoruV2cSk9S"
-	AccessKeySecret = "LlXw55fqPpL14ZNTBExw9wLwrYddPY"
-	SceneId         = "177jxdo1"
+	AccessKeyID     = "xxx"
+	AccessKeySecret = "xxx"
+	SceneId         = "xxx"
 	Param           = `{"sceneId":"177jxdo1","certifyId":"xxxxxx","deviceToken":"xxxxxxx==","data":"xxxxxx==","..."}`
 )
 

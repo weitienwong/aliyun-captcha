@@ -1,10 +1,8 @@
 package test
 
 import (
+	"github.com/weitienwong/aliyun-captcha"
 	"testing"
-
-	"github.com/weitienwong/aliyun-captcha/client"
-	"github.com/weitienwong/aliyun-captcha/config"
 )
 
 const (
@@ -15,15 +13,11 @@ const (
 )
 
 func TestVerify(t *testing.T) {
-	cfg := &config.CaptchaConfig{
+	cfg := &captcha.Config{
 		AccessKeyId:     AccessKeyID,
 		AccessKeySecret: AccessKeySecret,
 		SceneId:         SceneId,
 	}
-	c, err := client.NewClient(cfg)
-	if err != nil {
-		t.Log(err)
-		return
-	}
+	c := captcha.NewClient(cfg)
 	t.Log(c.Verify(Param))
 }

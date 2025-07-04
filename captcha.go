@@ -1,33 +1,36 @@
-package client
+package captcha
 
 import (
-	"errors"
 	captcha "github.com/alibabacloud-go/captcha-20230305/client"
 	openapi "github.com/alibabacloud-go/darabonba-openapi/v2/client"
 	"github.com/alibabacloud-go/tea/tea"
 	"github.com/aliyun/credentials-go/credentials"
-	"github.com/weitienwong/aliyun-captcha/config"
 	"log/slog"
 	"os"
 )
 
 type Client struct {
-	cfg    *config.CaptchaConfig
+	cfg    *Config
 	client *captcha.Client
 }
 
-func NewClient(cfg *config.CaptchaConfig) (*Client, error) {
+func NewClient(cfg *Config) *Client {
 	if cfg.AccessKeyId == "" {
-		return nil, errors.New("accessKeyId is required")
+		slog.Error("accessKeyId is required")
+		return nil
 	}
 	if cfg.AccessKeySecret == "" {
-		return nil, errors.New("accessKeySecret is required")
+		slog.Error("accessKeySecret is required")
+		return nil
 	}
 	if cfg.Endpoint == "" {
-		cfg.Endpoint = os.Getenv("ALIYUN_CAPTCHA_ENDPOINT")
-		if cfg.Endpoint == "" {
-			cfg.Endpoint = "captcha.cn-shanghai.aliyuncs.com"
+		_endpoint := os.Getenv("ALIYUN_CAPTCHA_ENDPOINT")
+		slog.Info("Get endpoint from ENV", "ALIYUN_CAPTCHA_ENDPOINT", _endpoint)
+		if _endpoint == "" {
+			slog.Warn("ALIYUN_CAPTCHA_ENDPOINT env was not found, use default endpoint(captcha.cn-shanghai.aliyuncs.com)")
+			_endpoint = "captcha.cn-shanghai.aliyuncs.com"
 		}
+		cfg.Endpoint = _endpoint
 	}
 
 	credential, err := credentials.NewCredential(&credentials.Config{
@@ -40,7 +43,7 @@ func NewClient(cfg *config.CaptchaConfig) (*Client, error) {
 
 	if err != nil {
 		slog.Error("Create credential error", "err", err)
-		return nil, err
+		return nil
 	}
 
 	captchaClient, err := captcha.NewClient(&openapi.Config{
@@ -50,13 +53,12 @@ func NewClient(cfg *config.CaptchaConfig) (*Client, error) {
 
 	if err != nil {
 		slog.Error("Create captcha client error", "err", err)
-		return nil, err
+		return nil
 	}
-
 	return &Client{
 		cfg:    cfg,
 		client: captchaClient,
-	}, nil
+	}
 }
 
 func (c *Client) Verify(param string) bool {
